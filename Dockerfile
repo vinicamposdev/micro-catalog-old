@@ -1,28 +1,27 @@
-# Check out https://hub.docker.com/_/node to select a new base image
-FROM node:16-slim
+FROM node:16-alpine
 
-# Set to a non-root built-in user `node`
+RUN apk add --no-cache bash git
+
+RUN touch /root/.bashrc | echo "PS1='\w\$ '" >> /root/.bashrc
+
+RUN npm cache clean --force
+
+RUN mkdir -p /home/node/app/.npm-cache
+
+RUN chmod -R 777 /home/node
+
+RUN npm config set unsafe-perm true
+
+RUN npm config set cache /home/node/app/.npm-cache --global
+
+RUN npm install -g nodemon
+RUN npm install -g @loopback/cli
+
 USER node
-
-# Create app directory (with user `node`)
-RUN mkdir -p /home/node/app
 
 WORKDIR /home/node/app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY --chown=node package*.json ./
+COPY . /home/node/app
 
-RUN npm install
+RUN cd /home/node/app && npm install
 
-# Bundle app source code
-COPY --chown=node . .
-
-RUN npm run build
-
-# Bind to all network interfaces so that it can be mapped to the host OS
-ENV HOST=0.0.0.0 PORT=3000
-
-EXPOSE ${PORT}
-CMD [ "node", "." ]

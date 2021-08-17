@@ -61,6 +61,29 @@ yarn run lint:fix
 yarn test
 ```
 
+## Docker Quickstart
+
+If it was the first time running the container. Just run:
+
+```sh
+rm -rf node_modules package-lock.json
+docker network create rabbitmq_micro-catalog
+chmod +x .docker/entrypoint.sh
+chmod +x .docker/
+docker-compose up -d --build
+```
+
+For the rest of the times
+```sh
+docker-compose up -d
+```
+
+If it's needed to shutdown the container, run:
+
+```sh
+docker-compose down
+```
+
 ## What's next
 
 Please check out [LoopBack 4 documentation](https://loopback.io/doc/en/lb4/) to
